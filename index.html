@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Staff Portal TMS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: white;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    header img {
+      height: 100px;
+      margin-right: 20px;
+    }
+
+    header h1 {
+      font-size: 1.8em;
+      margin: 0;
+		color: #3ab5fa;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #3ab5fa;
+    }
+
+    form {
+      margin-bottom: 40px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      background-color: #3ab5fa;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    button:hover {
+      background-color: #57b3ea;
+    }
+
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+      color: green;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 0.8em;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <!-- Replace 'logo.png' with your logo file path -->
+    <img src="logo.png" alt="Logo">
+    <h1>Staff Portal</h1>
+  </header>
+
+  <main>
+    <!-- Registration -->
+    <section>
+      <h2>Register New Person</h2>
+      <form onsubmit="showMessage('Person registered successfully!'); return false;">
+        <label>Full Name</label>
+        <input type="text" required />
+
+        <label>Date of Birth</label>
+        <input type="date" required />
+
+        <label>Email Address</label>
+        <input type="email" required />
+
+        <button type="submit">Register</button>
+        <div class="result" id="result1"></div>
+      </form>
+    </section>
+
+    <!-- Issue Card -->
+    <section>
+      <h2>Issue Travia Card</h2>
+      <form onsubmit="generateCardNumber('cardNumber'); showMessage('Travia card issued successfully!', 'result2'); return false;">
+       
+        <label>Assigned Person Name</label>
+        <input type="text" required />
+		  
+		  <label>Card Number</label>
+        <input type="text" id="cardNumber" required readonly />
+
+        <button type="submit">Issue Card</button>
+        <div class="result" id="result2"></div>
+      </form>
+    </section>
+
+    <!-- Add Ticket -->
+    <section>
+      <h2>Set New Ticket</h2>
+      <form onsubmit="showMessage('New ticket set on card!', 'result3'); return false;">
+        <label>Card Number</label>
+        <input type="text" required />
+
+        <label>Ticket Type</label>
+        <select required>
+          <option value="">-- Select Ticket --</option>
+          <option value="daily">Daily Pass</option>
+          <option value="weekly">Weekly Pass</option>
+          <option value="monthly">Monthly Pass</option>
+        </select>
+
+        <button type="submit">Add Ticket</button>
+        <div class="result" id="result3"></div>
+      </form>
+    </section>
+
+    <!-- T-Youth Card -->
+    <section>
+      <h2>Issue T-Youth Travia Card</h2>
+      <form onsubmit="generateCardNumber('youthCard'); return validateYouthCard();">
+        <label>Full Name</label>
+        <input type="text" id="youthName" required />
+
+        <label>Date of Birth</label>
+        <input type="date" id="youthDOB" required />
+
+        <label>Card Number</label>
+        <input type="text" id="youthCard" required readonly />
+
+        <button type="submit">Issue T-Youth Card</button>
+        <div class="result" id="result4"></div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+  </footer>
+
+  <script>
+    function showMessage(msg, id = 'result1') {
+      const result = document.getElementById(id);
+      result.textContent = msg;
+      result.style.color = 'green';
+
+      setTimeout(() => {
+        result.textContent = '';
+      }, 2000);
+    }
+
+    // Generate random 5-character alphanumeric card number
+    function generateCardNumber(inputId) {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let cardNumber = '';
+      for (let i = 0; i < 5; i++) {
+        cardNumber += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      document.getElementById(inputId).value = cardNumber;
+    }
+
+    function validateYouthCard() {
+      const dob = new Date(document.getElementById('youthDOB').value);
+      const today = new Date();
+      const age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      const validAge = age > 12 && age < 19 || (age === 12 && m >= 0) || (age === 18 && m < 0);
+
+      const result = document.getElementById('result4');
+      if (!validAge) {
+        result.textContent = '❌ Age must be between 12 and 16.';
+        result.style.color = 'red';
+      } else {
+        result.textContent = '✅ T-Youth card issued successfully!';
+        result.style.color = 'green';
+      }
+
+      setTimeout(() => {
+        result.textContent = '';
+      }, 2000);
+
+      return false;
+    }
+  </script>
+
+</body>
+</html>
